@@ -60,6 +60,10 @@ def not_pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
     sys_safe = set()
     env_safe = {'xobj=1 -> X(xobj=1)'}
     
+    # Object controllers: If you see an object that is not a pedestrian, then keep moving:
+    spec_k = {'(xobj=1)->X(vcar=1)'}
+    sys_safe |= spec_k
+    
     # Add system dynamics to safety specs:
     for ii in range(1, Ncar+1):
         for vi in range(Vlow, Vhigh+1):
@@ -137,13 +141,17 @@ def emptyK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
     env_prog = set()
     
     sys_safe = set()
+    
     # Env safe spec: If env is empty, it always remains empty
     env_spec = {'xempty=1 -> X(xempty=1)'}
     env_safe = set()
+    env_safe |= env_spec
     
     # Environment safety specs: Static pedestrian
     # env_safe |= {'xped='+str(xped)+'-> X(xped='+str(xped)+')'} 
-
+    # Spec: If you don't see an object, keep moving:
+    spec_k = {'(xempty=1)->X(vcar=1)'}
+    sys_safe |= spec_k
     # Add system dynamics to safety specs:
     for ii in range(1, Ncar+1):
         for vi in range(Vlow, Vhigh+1):

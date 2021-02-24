@@ -9,7 +9,7 @@ import numpy as np
 from tulip.transys import MarkovChain as MC
 from tulip.transys import MarkovDecisionProcess as MDP
 from itertools import compress, product
-from tulip.interfaces import stormpy as stormpy_int
+# from tulip.interfaces import stormpy as stormpy_int
 import os
 import ped_controller
 import empty_controller
@@ -179,7 +179,7 @@ class synth_markov_chain:
         Ki_strategy =self.K_strategy[obs]
         K_instant, sinit_adj, flg = self.adjust_state(Ki, Ki_strategy,obs,init_st) # If flg = 1, use sinit_adj as given by backup controller
         if flg == 0:
-            next_st = K_instant.move(*env_st)  # Might have to modify this when there are multiple observations
+            next_st = K_instant.move(*env_st) # Might have to modify this when there are multiple observations
         else:
             next_st = {'xcar': sinit_adj[0], 'vcar': sinit_adj[1]}
         return next_st
@@ -204,6 +204,7 @@ class synth_markov_chain:
             # Check --> good upto this point
             self.K_int_state_map[Ki] = dict()
             self.K_int_state_map_inv[Ki] = dict()
+            
             # Populating the dictionary:
             for ii in range(N_int_states):
                 self.K_int_state_map[Ki][ii] = None # None object
@@ -238,15 +239,20 @@ class synth_markov_chain:
         flg =0 # Default
         if sinit_st not in self.K_int_state_map_inv[Ki].keys():
             poss_st = self.backup[sinit_st]
-            test_list = [p for p in poss_st if p in self.K_int_state_map_inv[Ki].keys()]
-            if test_list: 
-                sinit_st = test_list[0] # First state in the dictionary; deterministic controller
-                init_st_adj=(self.K_int_state_map_inv[Ki])[sinit_st]
-                K_instant = Ki_strategy.TulipStrategy()
-                K_instant.state = init_st_adj
+            test_list = [p for p in poss_st if (p[0]==sinit_st[0] and p[1]==1)]  # If sinit_st is at zero velocity, car should not remain stuck at 0 velocity.
+            # test_list = [p for p in poss_st if p in self.K_int_state_map_inv[Ki].keys()]
+            # if test_list: 
+            #     sinit_st = test_list[0] # First state in the dictionary; deterministic controller
+                
+            #     init_st_adj=(self.K_int_state_map_inv[Ki])[sinit_st] 
+            #     K_instant = Ki_strategy.TulipStrategy()
+            #     K_instant.state = init_st_adj
+            # else:
+            flg = 1
+            K_instant = None
+            if test_list:
+                init_st_adj = test_list[0]
             else:
-                flg = 1
-                K_instant = None
                 init_st_adj = poss_st[0]
         else:
             init_st_adj=(self.K_int_state_map_inv[Ki])[sinit_st] # Finding the mapping from internal states
@@ -288,21 +294,21 @@ class synth_markov_chain:
         self.formula.append(phi)
 
     # Probabilistic satisfaction of a temporal logic with respect to a model:
-    def prob_TL(self, phi):
-        model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
-        prism_file_path = os.path.join(model_path, "pedestrian.nm")
-        composed = synchronous_parallel([self.MC, self.true_env_MC])
-        print(composed.transitions)
-        result = stormpy_int.model_checking(composed, phi, prism_file_path)
-        # result = stormpy_int.model_checking(self.MC, phi, prism_file_path) # Since there is no moving obstacle, try checking only the pedestrian obstacle
-        # Debugging: print states of result:
-        print(result)
-        print(" ")
-        for state in self.MC.states:
-           print("  State {}, with labels {}, Pr = {}".format(state, self.MC.states[state], result[(state, None)]))
-        # for state in self.MC.states:
-        #   print("  State {}, with labels {}, Pr = {}".format(state, self.MC.states[state]["ap"], result[state]))
-        return result # Implement this soon: Storm py
+    # def prob_TL(self, phi):
+    #     model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
+    #     prism_file_path = os.path.join(model_path, "pedestrian.nm")
+    #     composed = synchronous_parallel([self.MC, self.true_env_MC])
+    #     print(composed.transitions)
+    #     result = stormpy_int.model_checking(composed, phi, prism_file_path)
+    #     # result = stormpy_int.model_checking(self.MC, phi, prism_file_path) # Since there is no moving obstacle, try checking only the pedestrian obstacle
+    #     # Debugging: print states of result:
+    #     print(result)
+    #     print(" ")
+    #     for state in self.MC.states:
+    #        print("  State {}, with labels {}, Pr = {}".format(state, self.MC.states[state], result[(state, None)]))
+    #     # for state in self.MC.states:
+    #     #   print("  State {}, with labels {}, Pr = {}".format(state, self.MC.states[state]["ap"], result[state]))
+    #     return result # Implement this soon: Storm py
         
                     
                     
