@@ -250,7 +250,7 @@ class synth_markov_chain:
                 init_st_adj = poss_st[0]
         else:
             init_st_adj=(self.K_int_state_map_inv[Ki])[sinit_st] # Finding the mapping from internal states
-            print(init_st_adj)
+            # print(init_st_adj)
             K_instant = Ki_strategy.TulipStrategy()
             K_instant.state = init_st_adj   
         return K_instant, init_st_adj, flg
@@ -264,19 +264,24 @@ class synth_markov_chain:
     # Constructing the Markov chain 
     def construct_markov_chain(self): # Construct probabilities and transitions in the markov chain given the controller and confusion matrix
         for Si in list(self.states):
+            print("Finding initial states in the Markov chain: ")
+            print(Si)
             init_st = self.reverse_state_dict[Si]
             # The output state can be different depending on the observation as defined by the confusion matrix
             for obs in self.obs:
+                print("The observation is as follows: ")
+                print(obs)
                 env_st = self.get_env_state(obs)
                 next_st = self.compute_next_state(obs, env_st, init_st)
+                print("The next state for this observation is as follows: ")
                 print(next_st)
-                print(self.state_dict)
                 Sj = self.state_dict[tuple(next_st.values())]
                 prob_t = self.C[obs, self.true_env_type] # Probability of transitions
                 if (Si, Sj) in self.M.keys():
                     self.M[Si, Sj] = self.M[Si, Sj] + prob_t
                 else:
                     self.M[Si, Sj] = prob_t
+            print(" ")
         return self.M
     # Adding formulae to list of temporal logic formulas:
     def add_TL(self, phi):

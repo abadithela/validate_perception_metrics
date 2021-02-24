@@ -2,7 +2,7 @@ import os
 from tulip.interfaces import stormpy as stormpy_int
 from tulip.transys.compositions import synchronous_parallel
 
-model_path = "/home/ubuntu/software/code/Examples"
+model_path = os.path.join("/home/ubuntu/eeci/c1-probabilistic", "models")
 ma_path = os.path.join(model_path, "ma.nm")
 mh_path = os.path.join(model_path, "mh.pm")
 light_path = os.path.join(model_path, "light.pm")

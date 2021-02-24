@@ -6,7 +6,7 @@ import not_ped_controller as Kobj
 import empty_controller as Kempty
 
 # Initializing parameters for function:
-Ncar = 6
+Ncar = 5
 Vlow = 0
 Vhigh = 1
 
