@@ -34,10 +34,10 @@ M.construct_markov_chain()
 MC = M.to_MC("S1")
 
 # Add formula:
-# formula = 'P=? [G(!("S7" & "p3"))]'
-# formula2 = 'P=? [F("S8")]'# Eventually reach a good state
-# formula3 = 'P=? [!("S7") U "S8"]'
-# #formula = 'P=? [G(!("S7"))]'# phi = []((xcar = 4 & ped = 3) --> (vcar = 0)): !("S7"), where S7: xcar = 4 and vcar  = 1
+formula = 'P=? [G(!("S7" & "p3"))]'
+formula2 = 'P=? [F("S6")]'# Eventually reach a good state
+formula3 = 'P=? [!("S7") U "S6"]'
+#formula = 'P=? [G(!("S7"))]'# phi = []((xcar = 4 & ped = 3) --> (vcar = 0)): !("S7"), where S7: xcar = 4 and vcar  = 1
 
-# # Getting probability of satisfaction:
-# result = M.prob_TL(formula3)
+# Getting probability of satisfaction:
+result = M.prob_TL(formula3)

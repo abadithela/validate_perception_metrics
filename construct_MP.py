@@ -9,7 +9,7 @@ import numpy as np
 from tulip.transys import MarkovChain as MC
 from tulip.transys import MarkovDecisionProcess as MDP
 from itertools import compress, product
-# from tulip.interfaces import stormpy as stormpy_int
+from tulip.interfaces import stormpy as stormpy_int
 import os
 import ped_controller
 import empty_controller
@@ -294,21 +294,21 @@ class synth_markov_chain:
         self.formula.append(phi)
 
     # Probabilistic satisfaction of a temporal logic with respect to a model:
-    # def prob_TL(self, phi):
-    #     model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
-    #     prism_file_path = os.path.join(model_path, "pedestrian.nm")
-    #     composed = synchronous_parallel([self.MC, self.true_env_MC])
-    #     print(composed.transitions)
-    #     result = stormpy_int.model_checking(composed, phi, prism_file_path)
-    #     # result = stormpy_int.model_checking(self.MC, phi, prism_file_path) # Since there is no moving obstacle, try checking only the pedestrian obstacle
+    def prob_TL(self, phi):
+        model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
+        prism_file_path = os.path.join(model_path, "pedestrian.nm")
+        composed = synchronous_parallel([self.MC, self.true_env_MC])
+        print(composed.transitions)
+        result = stormpy_int.model_checking(composed, phi, prism_file_path)
+        result = stormpy_int.model_checking(self.MC, phi, prism_file_path) # Since there is no moving obstacle, try checking only the pedestrian obstacle
     #     # Debugging: print states of result:
-    #     print(result)
-    #     print(" ")
-    #     for state in self.MC.states:
-    #        print("  State {}, with labels {}, Pr = {}".format(state, self.MC.states[state], result[(state, None)]))
-    #     # for state in self.MC.states:
-    #     #   print("  State {}, with labels {}, Pr = {}".format(state, self.MC.states[state]["ap"], result[state]))
-    #     return result # Implement this soon: Storm py
+        print(result)
+        print(" ")
+        for state in self.MC.states:
+            print("  State {}, with labels {}, Pr = {}".format(state, self.MC.states[state], result[(state, None)]))
+         # for state in self.MC.states:
+         #   print("  State {}, with labels {}, Pr = {}".format(state, self.MC.states[state]["ap"], result[state]))
+        return result # Implement this soon: Storm py
         
                     
                     
