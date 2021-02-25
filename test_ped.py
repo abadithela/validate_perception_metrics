@@ -6,14 +6,38 @@ import not_ped_controller as Kobj
 import empty_controller as Kempty
 
 # Initializing parameters for function:
-Ncar = 5
-Vlow = 0
-Vhigh = 1
+vmax = 3
+if vmax == 3:
+    Ncar = 7
+    Vlow = 0
+    Vhigh = 3
+    xped = 3
+    xcross_start = 5
+    vcar = Vhigh//2
+    phi = 'P=? [!("S23"|"S22" | "S21") U "S20"]'
+
+if vmax == 2:
+    Ncar = 7
+    Vlow = 0
+    Vhigh = 2
+    xped = 3
+    vcar = Vhigh
+    xcross_start = 4
+    phi = 'P=? [!("S13" | "S14")U "S12"]'
+
+if vmax == 1:
+    Ncar = 1
+    Vlow = 0
+    Vhigh = 1
+    xped = 3
+    xcross_start = 3
+    vcar = Vhigh
+    phi = 'P=? [!("S7")U"S6"]'
 
 S, state_to_S, K_backup = cmp.system_states_example_ped(Ncar, Vlow, Vhigh)
 C = cmp.confusion_matrix_ped()
-K = K_des.construct_controllers(Ncar, Vlow, Vhigh)
-true_env = "3"#Sidewalk 3
+K = K_des.construct_controllers(Ncar, Vlow, Vhigh, xped, vcar, xcross_start)
+true_env = str(xped) #Sidewalk 3
 true_env_type = "ped"
 O = {"ped", "obj", "empty"}
 K_strat = dict()
@@ -32,12 +56,16 @@ M.construct_internal_state_maps()
 # Construct Markov chain:
 M.construct_markov_chain()
 MC = M.to_MC("S1")
+print(M.M)
 
 # Add formula:
+xcar_des = (xcross_start-1) + xped - 1
+vcar_des = 0
+reach_state = (Vhigh-Vlow+1)*(xcar_des-1) + vcar_des
 formula = 'P=? [G(!("S7" & "p3"))]'
-formula2 = 'P=? [F("S6")]'# Eventually reach a good state
-formula3 = 'P=? [!("S7") U "S6"]'
+formula2 = 'P=? [F("S18")]'# Eventually reach a good state
+formula3 = 'P=? [!("S10") U "S9"]'
 #formula = 'P=? [G(!("S7"))]'# phi = []((xcar = 4 & ped = 3) --> (vcar = 0)): !("S7"), where S7: xcar = 4 and vcar  = 1
 
 # Getting probability of satisfaction:
-result = M.prob_TL(formula3)
+result = M.prob_TL(phi)

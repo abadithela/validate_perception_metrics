@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/uIsr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Mon Feb  8 09:12:22 2021
@@ -36,12 +36,16 @@ def construct_backup_controller(Ncar, Vlow, Vhigh):
             if xcar == Ncar:
                 end_st.append((xcar, vcar))
             elif vcar == 0:
+                xcar_p = min(Ncar, xcar+1)
                 end_st.append((xcar, vcar))
-                end_st.append((xcar+1, vcar+1))
+                end_st.append((xcar_p, vcar+1))
                 end_st.append((xcar, vcar+1))
             else:
-                end_st.append((xcar+Vhigh, vcar))
-                end_st.append((xcar+Vhigh, vcar-1))
+                xcar_p = min(Ncar, xcar+vcar)
+                end_st.append((xcar_p, vcar))
+                end_st.append((xcar_p, vcar-1))
+                if vcar < Vhigh:
+                    end_st.append((xcar_p, vcar+1))
             K_backup[st] = end_st
     return K_backup
 # Script for confusion matrix of pedestrian
@@ -304,8 +308,8 @@ class synth_markov_chain:
     #     # Debugging: print states of result:
         print(result)
         print(" ")
-        for state in self.MC.states:
-            print("  State {}, with labels {}, Pr = {}".format(state, self.MC.states[state], result[(state, None)]))
+       # for state in self.MC.states:
+       #     print("  State {}, with labels {}, Pr = {}".format(state, self.MC.states[state], result[(state, None)]))
          # for state in self.MC.states:
          #   print("  State {}, with labels {}, Pr = {}".format(state, self.MC.states[state]["ap"], result[state]))
         return result # Implement this soon: Storm py

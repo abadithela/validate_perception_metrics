@@ -93,7 +93,9 @@ def pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
     
     sys_prog = set() # For now, no need to have progress
     env_prog = set()
-    
+    xcar_jj = xcross_start + (xped-1) - 1 # eventual goal location for car 
+    sys_prog = set({'xcar = '+str(xcar_jj)})
+
     sys_safe = set()
     env_safe = set()
     
@@ -108,6 +110,11 @@ def pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
         spec1_ii = {'(xcar='+str(xcar_jj)+') && (xped='+str(ii)+')-> (vcar=0)'}
         sys_safe |= spec1_ii
         spec2_ii = {'(xcar='+str(xcar_jj)+') && !(xped='+str(ii)+')-> (!(vcar=0))'}
+        sys_safe |= spec2_ii
+    
+    # System safety specs:
+    for ii in range(1, xcross_start):
+        spec2_ii = {'(xcar='+str(ii)+')-> (!(vcar=0))'}
         sys_safe |= spec2_ii
     
     # Add system dynamics to safety specs:
@@ -150,8 +157,24 @@ def emptyK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
     # Environment safety specs: Static pedestrian
     # env_safe |= {'xped='+str(xped)+'-> X(xped='+str(xped)+')'} 
     # Spec: If you don't see an object, keep moving:
-    spec_k = {'(xempty=1)->X(vcar=1)'}
+    spec_k = {'(xempty=1 && vcar=0)->X(vcar=1)'}
     sys_safe |= spec_k
+    if Vhigh == 2:
+        spec_k = {'(xempty=1 && vcar=1)->X(vcar=2)'}
+        sys_safe |= spec_k
+
+        spec_k = {'(xempty=1 && vcar=2)->X(vcar=2)'}
+        sys_safe |= spec_k
+    if Vhigh == 3:
+        spec_k = {'(xempty=1 && vcar=1)->X(vcar=2)'}
+        sys_safe |= spec_k
+
+        spec_k = {'(xempty=1 && vcar=2)->X(vcar=3)'}
+        sys_safe |= spec_k
+
+        spec_k = {'(xempty=1 && vcar=3)->X(vcar=3)'}
+        sys_safe |= spec_k
+
     # Add system dynamics to safety specs:
     for ii in range(1, Ncar+1):
         for vi in range(Vlow, Vhigh+1):
@@ -169,13 +192,10 @@ def emptyK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
     return env_vars, sys_vars, env_init, sys_init, env_safe, sys_safe, env_prog, sys_prog
 
 # Design controller:
-def construct_controllers(Ncar, Vlow, Vhigh):
+def construct_controllers(Ncar, Vlow, Vhigh, xped, vcar, xcross_start):
     # Simple example of pedestrian crossing street:
     Nped = 3
     xcar = 1
-    vcar = Vhigh
-    xped = 3
-    xcross_start = 3
     assert (Nped + xcross_start-1 <= Ncar)
     # When a pedestrian is observed:
     env_vars, sys_vars, env_init, sys_init, env_safe, sys_safe, env_prog, sys_prog = pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start)
