@@ -14,10 +14,9 @@ def probability_plot(INIT_V, P):
 fname_v = "type_1_init_v_20210228-045604_.json"
 fname_p = "type_1_prob_20210228-045604_.json"
 
-fv = json.load(fname_v)
-fp = json.load(fname_p)
-
-INIT_V = json.load(fv)
-P = json.load(fp)
+with open(fname_v) as fv:
+    INIT_V = json.load(fv)
+with open(fname_p) as fp:
+    P = json.load(fp)
 
 probability_plot(INIT_V, P)
