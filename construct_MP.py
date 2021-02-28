@@ -11,9 +11,6 @@ from tulip.transys import MarkovDecisionProcess as MDP
 from itertools import compress, product
 from tulip.interfaces import stormpy as stormpy_int
 import os
-import ped_controller
-import empty_controller
-import not_ped_controller
 from tulip.transys.compositions import synchronous_parallel
 
 # Function to return a list of all combinations of inputs:
@@ -130,7 +127,7 @@ class synth_markov_chain:
         self.backup = dict() # This is a backup controller.
 
  # Convert this Markov chain object into a tulip transition system:
-    def to_MC(self, init):
+    def to_MC(self, init, bad_states, good_states):
        states = set(self.states) # Set of product states of the car
        transitions = set()
        for k in self.M.keys():
@@ -143,9 +140,25 @@ class synth_markov_chain:
        markov_chain = _construct_mdpmc(states, transitions, init)
        for state in self.MC.states:
            self.MC.states[state]["ap"] = {state}
+           # if state in good_states:
+           #   self.MC.states[state]["ap"] = {"good"}
+           # elif state in bad_states:
+           #   self.MC.states[state]["ap"] = {"bad"}
+           # else:
+           #   self.MC.states[state]["ap"] = {state}
        self.check_MC() # Checking if Markov chain is valid
        return markov_chain
-   
+
+# Writing/Printing Markov chains to file:
+    def print_MC(self):
+       model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
+       path_MC = os.path.join(model_path, "model_MC.nm")
+       env_MC = os.path.join(model_path, "env_MC.nm")
+       path_MC_model = stormpy_int.build_stormpy_model(path_MC)
+       env_MC_model = stormpy_int.build_stormpy_model(env_MC)
+       stormpy_int.print_stormpy_model(path_MC_model)
+       stormpy_int.print_stormpy_model(env_MC_model)
+
    # Function to check if all outgoing transition probabilities for any state in the Markov chain sum to 1.
     def check_MC(self):
        T = self.MC.transitions(data=True)
@@ -301,13 +314,30 @@ class synth_markov_chain:
     def prob_TL(self, phi):
         model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
         prism_file_path = os.path.join(model_path, "pedestrian.nm")
+        path_MC = os.path.join(model_path, "model_MC.nm")
+        env_MC = os.path.join(model_path, "env_MC.nm")
+        # Print self markov chain:
+        # print(self.MC)
+        # Writing prism files:
+        stormpy_int.to_prism_file(self.MC, path_MC)
+        stormpy_int.to_prism_file(self.true_env_MC, env_MC)
         composed = synchronous_parallel([self.MC, self.true_env_MC])
-        print(composed.transitions)
+        # print(composed.transitions)
         result = stormpy_int.model_checking(composed, phi, prism_file_path)
+        # Returns a tulip transys:
+        # MC_ts = stormpy_int.to_tulip_transys(path_MC)
         result = stormpy_int.model_checking(self.MC, phi, prism_file_path) # Since there is no moving obstacle, try checking only the pedestrian obstacle
-    #     # Debugging: print states of result:
+        
+        # for state in self.MC.states:
+        #    print(self.MC.states[state]["ap"])
+        #    self.MC.states[state]["ap"] |= {"good"}
+        
+     # Debugging: print states of result:
+        print(self.MC)
         print(result)
         print(" ")
+
+
        # for state in self.MC.states:
        #     print("  State {}, with labels {}, Pr = {}".format(state, self.MC.states[state], result[(state, None)]))
          # for state in self.MC.states:
