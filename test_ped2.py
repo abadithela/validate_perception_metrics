@@ -6,9 +6,11 @@ from MC_construct import call_MC
 # from figure_plot import probability_plot
 import time
 import json
+import sys
+sys.setrecursionlimit(10000)
 
 def initialize(vmax):
-    Ncar = int(vmax*(vmax+1)/2 + 5)
+    Ncar = int(vmax*(vmax+1)/2 + 10)
     Vlow=  0
     Vhigh = vmax
     x_vmax_stop = vmax*(vmax+1)/2 + 1
@@ -50,7 +52,7 @@ def initialize(vmax):
     return Ncar, Vlow, Vhigh, xcross_start, xped, bad_states, good_state, formula
 
 def initialize2(vcar, vmax):
-    Ncar = int(vmax*(vmax+1)/2 + 5)
+    Ncar = int(vmax*(vmax+1)/2 +10)
     Vlow=  0
     Vhigh = vmax
     
@@ -97,12 +99,12 @@ def initialize2(vcar, vmax):
     return flg, Ncar, Vlow, Vhigh, xcross_start, xped, bad_states, good_states, formula
 
 # Initialize the velocity for vmax1:
-ex= 2
+ex= 1
 if ex == 1:
     VMAX = []
     INIT_V = dict()
     P = dict()
-    for vmax in range(1,6):
+    for vmax in range(1,8):
         INIT_V[vmax] = []
         P[vmax] = []
         print("===========================================================")
@@ -138,7 +140,7 @@ if ex == 2:
     INIT_V = dict()
     P = dict()
     # Initialize the velocity for where max velocity is not feasible but slower velocity is possible:
-    for vmax in range(1,6):
+    for vmax in range(1,11):
         INIT_V[vmax] = []
         P[vmax] = []
         print("===========================================================")
