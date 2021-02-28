@@ -99,12 +99,12 @@ def initialize2(vcar, vmax):
     return flg, Ncar, Vlow, Vhigh, xcross_start, xped, bad_states, good_states, formula
 
 # Initialize the velocity for vmax1:
-ex= 1
+ex= 2
 if ex == 1:
     VMAX = []
     INIT_V = dict()
     P = dict()
-    for vmax in range(1,8):
+    for vmax in range(1, 11):
         INIT_V[vmax] = []
         P[vmax] = []
         print("===========================================================")

@@ -11,7 +11,7 @@ def probability_plot(INIT_V, P, fig_name):
     leg = plt.legend(loc="best")
     plt.xlabel("Initial speed")
     plt.ylabel("Probability of satisfaction")
-    plt.xticks(np.arange(1,8,1))
+    plt.xticks(np.arange(1,10,1))
     plt.savefig(fig_name, format='png', dpi=1200)
     plt.show()
     

@@ -164,13 +164,13 @@ class synth_markov_chain:
        T = self.MC.transitions(data=True)
        # Printing all states and outgoing transitions
        for st in self.MC.states:
-           print("State: ", st)
+           # print("State: ", st)
            end_states = [t for t in T if t[0]==st]
-           print("End states: ")
-           print(end_states)
+           # print("End states: ")
+           # print(end_states)
            prob = [(t[2])['probability'] for t in end_states]
-           print("probability of end states: ")
-           print(prob)
+           # print("probability of end states: ")
+           # print(prob)
            assert abs(sum(prob)-1)<1e-4 # Checking that probabilities add up to 1 for every state
 
    # Sets the state of the true environment
@@ -287,24 +287,24 @@ class synth_markov_chain:
     # Constructing the Markov chain 
     def construct_markov_chain(self): # Construct probabilities and transitions in the markov chain given the controller and confusion matrix
         for Si in list(self.states):
-            print("Finding initial states in the Markov chain: ")
-            print(Si)
+            # print("Finding initial states in the Markov chain: ")
+            # print(Si)
             init_st = self.reverse_state_dict[Si]
             # The output state can be different depending on the observation as defined by the confusion matrix
             for obs in self.obs:
-                print("The observation is as follows: ")
-                print(obs)
+                # print("The observation is as follows: ")
+                # print(obs)
                 env_st = self.get_env_state(obs)
                 next_st = self.compute_next_state(obs, env_st, init_st)
-                print("The next state for this observation is as follows: ")
-                print(next_st)
+                # print("The next state for this observation is as follows: ")
+                # print(next_st)
                 Sj = self.state_dict[tuple(next_st.values())]
                 prob_t = self.C[obs, self.true_env_type] # Probability of transitions
                 if (Si, Sj) in self.M.keys():
                     self.M[Si, Sj] = self.M[Si, Sj] + prob_t
                 else:
                     self.M[Si, Sj] = prob_t
-            print(" ")
+            # print(" ")
         return self.M
     # Adding formulae to list of temporal logic formulas:
     def add_TL(self, phi):
@@ -335,7 +335,7 @@ class synth_markov_chain:
      # Debugging: print states of result:
         # print(self.MC)
         # print(result)
-        print(" ")
+        # print(" ")
 
 
        # for state in self.MC.states:

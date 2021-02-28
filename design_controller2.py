@@ -87,7 +87,12 @@ def pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
 
     sys_init = {'xcar='+str(xcar), 'vcar='+str(vcar)}
     env_init = {'xped='+str(xped)}
+    
+    # Test lines: 
+    sys_init = {'xcar='+str(xcar)}
+    env_init = {'xped='+str(xped)}
 
+    # ========================= #
     sys_prog = set() # For now, no need to have progress
     env_prog = set()
     xcar_jj = xcross_start + (xped-1) - 1 # eventual goal location for car 
