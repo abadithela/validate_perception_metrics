@@ -333,8 +333,8 @@ class synth_markov_chain:
         #    self.MC.states[state]["ap"] |= {"good"}
         
      # Debugging: print states of result:
-        print(self.MC)
-        print(result)
+        # print(self.MC)
+        # print(result)
         print(" ")
 
 

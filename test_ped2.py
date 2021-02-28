@@ -3,7 +3,7 @@ import construct_MP as cmp
 import design_controller2 as K_des
 import matplotlib as plt
 from MC_construct import call_MC
-from figure_plot import probability_plot
+# from figure_plot import probability_plot
 import time
 import json
 
@@ -46,7 +46,7 @@ def initialize(vmax):
         else:
             bad = bad + "|\""+st+"\""
 
-    formula = "P=?["+str(bad)+" U "+str(good)+"]"
+    formula = "P=?[!("+str(bad)+") U "+str(good)+"]"
     return Ncar, Vlow, Vhigh, xcross_start, xped, bad_states, good_state, formula
 
 def initialize2(vcar, vmax):
@@ -83,7 +83,7 @@ def initialize2(vcar, vmax):
                 bad = bad + "\"" + st+"\""
             else:
                 bad = bad + "|\""+st+"\""
-        formula = "P=?["+str(bad)+" U "+str(good)+"]"
+        formula = "P=?[!("+str(bad)+") U "+str(good)+"]"
     else:
         flg = 1 # Bad state
         Ncar = None
@@ -92,12 +92,12 @@ def initialize2(vcar, vmax):
         xcross_start = None
         xped = None
         bad_states = []
-        good_state = []
+        good_states = []
         formula = ''
     return flg, Ncar, Vlow, Vhigh, xcross_start, xped, bad_states, good_states, formula
 
 # Initialize the velocity for vmax1:
-ex= 1
+ex= 2
 if ex == 1:
     VMAX = []
     INIT_V = dict()
@@ -109,6 +109,8 @@ if ex == 1:
         print("Max Velocity: ", vmax)
         # Initial conditions set for all velocities
         Ncar, Vlow, Vhigh, xcross_start, xped, bad_states, good_state, formula = initialize(vmax)
+        print("Specification: ")
+        print(formula)
         for vcar in range(1, vmax+1):  # Initial speed at starting point
             state_f = lambda x,v: (Vhigh-Vlow+1)*(x-1) + v
             start_state = "S"+str(state_f(1,vcar))
@@ -128,6 +130,8 @@ if ex == 1:
             # Store results:
             VMAX.append(vmax)
             INIT_V[vmax].append(vcar)
+            p = result[start_state]
+            print('Probability of satisfaction for initial speed, {}, and max speed, {} is p = {}:'.format(vcar, vmax, p))
             P[vmax].append(result[start_state])
 if ex == 2:
     VMAX = []
@@ -143,6 +147,8 @@ if ex == 2:
         for vcar in range(1, vmax+1):  # Initial speed at starting point
             flg, Ncar, Vlow, Vhigh, xcross_start, xped, bad_states, good_state, formula = initialize2(vcar, vmax)    
             if not flg:
+                print("Specification: ")
+                print(formula)
                 state_f = lambda x,v: (Vhigh-Vlow+1)*(x-1) + v
                 start_state = "S"+str(state_f(1,vcar))
                 S, state_to_S, K_backup = cmp.system_states_example_ped(Ncar, Vlow, Vhigh)
@@ -161,6 +167,8 @@ if ex == 2:
                 result = M.prob_TL(formula)
                 VMAX.append(vmax)
                 INIT_V[vmax].append(vcar)
+                p = result[start_state]
+                print('Probability of satisfaction from start state {} for initial speed, {}, and max speed, {} is p = {}:'.format(start_state, vcar, vmax, p))
                 P[vmax].append(result[start_state])
             else:
                 break
