@@ -95,8 +95,8 @@ if ex == 1:
 timestr = time.strftime("%Y%m%d-%H%M%S")
 fname_v = "type_"+str(ex)+"_"+"init_v_" + timestr+"_.json"
 fname_p = "type_"+str(ex)+"_"+"prob_" + timestr+"_.json"
-fname_v = "test_type1_vmax_4_initv.json"
-fname_p = "test_type1_vmax_4_prob.json"
+fname_v = "test_same_MC_type1_vmax_4_initv.json"
+fname_p = "test_same_MC_type1_vmax_4_prob.json"
 with open(fname_v, 'w') as f:
     json.dump(INIT_V, f)
 with open(fname_p, 'w') as f:

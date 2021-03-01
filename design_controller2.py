@@ -45,6 +45,10 @@ def not_pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
 
     sys_init = {'xcar='+str(xcar), 'vcar='+str(vcar)}
     env_init = {'xobj='+str(1)}
+    
+     # Test lines:
+    sys_init = {'xcar='+str(xcar)}
+    env_init = {'xobj='+str(1)}
 
     sys_prog = set() # For now, no need to have progress
     env_prog = set()
@@ -144,6 +148,9 @@ def emptyK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
     env_vars['xempty'] = (0,1) # Pavement is empty
 
     sys_init = {'xcar='+str(xcar), 'vcar='+str(vcar)}
+    env_init = {'xempty='+str(1)}
+     # Test lines:
+    sys_init = {'xcar='+str(xcar)}
     env_init = {'xempty='+str(1)}
 
     sys_prog = set() # For now, no need to have progress
