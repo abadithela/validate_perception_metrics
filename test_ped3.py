@@ -10,7 +10,7 @@ import sys
 sys.setrecursionlimit(10000)
 
 def initialize(vmax):
-    Ncar = int(vmax*(vmax+1)/2 + 2)
+    Ncar = int(vmax*(vmax+1)/2 + 10)
     Vlow=  0
     Vhigh = vmax
     x_vmax_stop = vmax*(vmax+1)/2 + 1

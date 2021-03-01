@@ -99,7 +99,7 @@ def initialize2(vcar, vmax):
     return flg, Ncar, Vlow, Vhigh, xcross_start, xped, bad_states, good_states, formula
 
 # Initialize the velocity for vmax1:
-ex= 2
+ex= 1
 if ex == 1:
     VMAX = []
     INIT_V = dict()
