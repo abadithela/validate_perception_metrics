@@ -181,8 +181,8 @@ if ex == 2:
 # probability_plot(VMAX, INIT_V, P)
 # Write to json file:
 timestr = time.strftime("%Y%m%d-%H%M%S")
-fname_v = "type_"+str(ex)+"_"+"init_v_" + timestr+"_.json"
-fname_p = "type_"+str(ex)+"_"+"prob_" + timestr+"_.json"
+fname_v = "type_"+str(ex)+"_same_MC_"+"init_v_" + timestr+"_.json"
+fname_p = "type_"+str(ex)+"_same_MC_"+"prob_" + timestr+"_.json"
 with open(fname_v, 'w') as f:
     json.dump(INIT_V, f)
 with open(fname_p, 'w') as f:
