@@ -1,6 +1,6 @@
 import numpy as np
 import construct_MP as cmp
-import design_controller2 as K_des
+import design_controller as K_des
 import matplotlib as plt
 from MC_construct import call_MC
 # from figure_plot import probability_plot
