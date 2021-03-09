@@ -1,7 +1,7 @@
 import ped_controller as Kped
 import not_ped_controller as Kobj
 import empty_controller as Kempty
-import construct_MP as cmp
+import construct_MP3 as cmp
 import importlib
 
 def call_MC(S, O, state_to_S, K, K_backup, C, true_env, true_env_type, state_info):
@@ -13,6 +13,11 @@ def call_MC(S, O, state_to_S, K, K_backup, C, true_env, true_env_type, state_inf
     K_strat["ped"] = Kped
     K_strat["obj"] = Kobj
     K_strat["empty"] = Kempty
+    
+    obs_keys = dict()
+    obs_keys["ped"] = ["xcar", "vcar"]
+    obs_keys["obj"] = ["xobj"]
+    obs_keys["empty"] = ["xempty"]
     
     M = cmp.synth_markov_chain(S, O, state_to_S)
     M.set_confusion_matrix(C)

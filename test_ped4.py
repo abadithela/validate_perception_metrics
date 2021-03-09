@@ -7,7 +7,7 @@ Created on Mon Mar  8 11:08:00 2021
 """
 
 import numpy as np
-import construct_MP as cmp
+import construct_MP3 as cmp
 import design_controller3 as K_des
 import matplotlib as plt
 from MC_construct import call_MC
@@ -79,7 +79,8 @@ if ex == 1:
             S, state_to_S, K_backup = cmp.system_states_example_ped(Ncar, Vlow, Vhigh)
             C = cmp.confusion_matrix_ped()
             K = K_des.construct_controllers(Ncar, Vlow, Vhigh, xped, vcar, xcross_start)
-            true_env = str(xped) #Sidewalk 3
+            Nped = Ncar - xcross_start+1
+            true_env = str(xped - Nped+1) #Sidewalk 3
             true_env_type = "ped"
             O = {"ped", "obj", "empty"}
             state_info = dict()
