@@ -18,7 +18,7 @@ import sys
 sys.setrecursionlimit(10000)
 
 def initialize(vmax):
-    Ncar = int(vmax*(vmax+1)/2 + 3)
+    Ncar = int(vmax*(vmax+1)/2 + 5)
     Vlow=  0
     Vhigh = vmax
     x_vmax_stop = vmax*(vmax+1)/2 + 1
@@ -63,7 +63,7 @@ if ex == 1:
     VMAX = []
     INIT_V = dict()
     P = dict()
-    for vmax in range(2, 3):
+    for vmax in range(1, 5):
         INIT_V[vmax] = []
         P[vmax] = []
         print("===========================================================")
@@ -80,7 +80,7 @@ if ex == 1:
             C = cmp.confusion_matrix_ped()
             K = K_des.construct_controllers(Ncar, Vlow, Vhigh, xped, vcar, xcross_start)
             Nped = Ncar - xcross_start+1
-            true_env = str(xped - Nped+1) #Sidewalk 3
+            true_env = str(0) #Sidewalk 3 # all of them would be at state 0
             true_env_type = "ped"
             O = {"ped", "obj", "empty"}
             state_info = dict()
