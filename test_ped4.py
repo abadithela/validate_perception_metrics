@@ -1,6 +1,14 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Mar  8 11:08:00 2021
+
+@author: apurvabadithela
+"""
+
 import numpy as np
 import construct_MP as cmp
-import design_controller2 as K_des
+import design_controller3 as K_des
 import matplotlib as plt
 from MC_construct import call_MC
 # from figure_plot import probability_plot
@@ -10,7 +18,7 @@ import sys
 sys.setrecursionlimit(10000)
 
 def initialize(vmax):
-    Ncar = int(vmax*(vmax+1)/2 + 10)
+    Ncar = int(vmax*(vmax+1)/2 + 3)
     Vlow=  0
     Vhigh = vmax
     x_vmax_stop = vmax*(vmax+1)/2 + 1
@@ -55,7 +63,7 @@ if ex == 1:
     VMAX = []
     INIT_V = dict()
     P = dict()
-    for vmax in range(3, 4):
+    for vmax in range(2, 3):
         INIT_V[vmax] = []
         P[vmax] = []
         print("===========================================================")
@@ -64,7 +72,7 @@ if ex == 1:
         Ncar, Vlow, Vhigh, xcross_start, xped, bad_states, good_state, formula = initialize(vmax)
         print("Specification: ")
         print(formula)
-        for vcar in range(1, vmax+1):  # Initial speed at starting point
+        for vcar in range(vmax, vmax+1):  # Initial speed at starting point
             state_f = lambda x,v: (Vhigh-Vlow+1)*(x-1) + v
             start_state = "S"+str(state_f(1,vcar))
             print(start_state)
