@@ -7,7 +7,7 @@ Created on Mon Mar  8 11:08:00 2021
 
 import numpy as np
 import construct_MP3 as cmp
-import design_controller3 as K_des
+import design_controller4 as K_des
 import matplotlib as plt
 from MC_construct2 import call_MC
 # from figure_plot import probability_plot
@@ -62,7 +62,7 @@ if ex == 1:
     VMAX = []
     INIT_V = dict()
     P = dict()
-    for vmax in range(1, 11):
+    for vmax in range(1, 3):
         INIT_V[vmax] = dict()
         P[vmax] = dict()
         print("===========================================================")
@@ -72,12 +72,13 @@ if ex == 1:
         print("Specification: ")
         print(formula)
 
-        Nped = Ncar - xcross_start + 1
         count = 0
         for xped_i in range(xped, Nped+1):
             INIT_V[vmax][count] = []
             P[vmax][count]= []
             print(xped_i)
+            Nped = Ncar - xcross_start + 1
+            count = 0
             for vcar in range(1, vmax+1):  # Initial speed at starting point
                 state_f = lambda x,v: (Vhigh-Vlow+1)*(x-1) + v
                 start_state = "S"+str(state_f(1,vcar))
@@ -95,17 +96,16 @@ if ex == 1:
                 state_info["good"] = good_state
                 for st in list(good_state):
                     formula2 = 'P=?[F(\"'+st+'\")]'
-                M = call_MC(S, O, state_to_S, K, K_backup, C, true_env, true_env_type, state_info)
+                M= call_MC(S, O, state_to_S, K, K_backup, C, true_env, true_env_type, state_info)
                 result = M.prob_TL(formula)
                 result2 = M.prob_TL(formula2)
                 print('Probability of eventually reaching good state for initial speed, {}, and max speed, {} is p = {}:'.format(vcar, vmax, result2[start_state]))
-                # Store results:
-                VMAX.append(vmax)
-                INIT_V[vmax][count].append(vcar)
-                p = result[start_state]
-                print('Probability of satisfaction for initial speed, {}, and max speed, {} is p = {}:'.format(vcar, vmax, p))
-                P[vmax][count].append(result[start_state])
-            count = count+1 # Updating count
+            # Store results:
+            VMAX.append(vmax)
+            INIT_V[vmax].append(vcar)
+            p = result[start_state]
+            print('Probability of satisfaction for initial speed, {}, and max speed, {} is p = {}:'.format(vcar, vmax, p))
+            P[vmax].append(result[start_state])
 # # Write to json file:
 timestr = time.strftime("%Y%m%d-%H%M%S")
 fname_v = "type_"+str(ex)+"_"+"init_v_" + timestr+"_.json"
@@ -116,3 +116,5 @@ with open(fname_v, 'w') as f:
     json.dump(INIT_V, f)
 with open(fname_p, 'w') as f:
     json.dump(P, f)
+
+
