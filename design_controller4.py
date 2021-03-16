@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Mar  8 11:08:15 2021
-
-@author: apurvabadithela
-"""
-
 from __future__ import print_function
 
 import logging
@@ -56,7 +48,7 @@ def not_pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
     env_init = {'xobj='+str(1)}
     
      # Test lines:
-    sys_init = {'xcar='+str(xcar)}
+    sys_init = {'xcar='+str(xcar), 'vcar='+str(vcar)}
     env_init = {'xobj='+str(1)}
 
     sys_prog = set() # For now, no need to have progress
@@ -117,7 +109,7 @@ def pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
     for xi in range(0, 2):
         env_safe |= {'xped='+str(xi)+'-> X(xped='+str(xi)+')'}
     
-    
+    # Safety specifications for car to stop before pedestrian
     xcar_jj = xped+(xcross_start-1)-1
     # Safety specifications to specify that car must stop before pedestrian:
     sys_safe |= {'((xped = 1) ||!(xcar = '+str(xcar_jj)+' && vcar = 0))'}
@@ -128,6 +120,11 @@ def pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
         else:
             car_states = car_states + " || xcar = " + str(xcar_ii)
     sys_safe |= {'(!(xped = 1)||!('+car_states+')||(vcar = 0 && xcar = '+str(xcar_jj)+'))'}
+    
+    # Safety specs for car to not stop before car reaching pedestrian sidewalk
+    for xi in range(1, xcar_jj):
+        sys_safe |= {'!(xcar = '+str(xi)+' && vcar = 0)'}
+    
         # sys_safe |= {'(xped='+str(xi)+' && xcar = '+str(xcar_jj)+' && vcar = 0) -> X(xcar = '+str(xcar_jj)+' && vcar = 0)'}
     
     # for ii in range(0, Nped-xped+1):
@@ -230,7 +227,7 @@ def emptyK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
     sys_init = {'xcar='+str(xcar), 'vcar='+str(vcar)}
     env_init = {'xempty='+str(1)}
      # Test lines:
-    sys_init = {'xcar='+str(xcar)}
+    sys_init = {'xcar='+str(xcar), 'vcar='+str(vcar)}
     env_init = {'xempty='+str(1)}
 
     sys_prog = set() # For now, no need to have progress
@@ -324,4 +321,5 @@ if __name__=='__main__':
     write_python_case("empty_controller.py", Kempty)
 
     
+
 
