@@ -64,6 +64,32 @@ def confusion_matrix_ped():
     
     return C
 
+# Script for confusion matrix of pedestrian
+# Varying the precision/recall confusion matrix values
+def confusion_matrix_ped2(prec, recall):
+    C = dict()
+    tp = recall*100
+    fn = tp/prec - tp
+    tn = 200 - fn
+    C["ped", "ped"] = (recall*100)/100.0
+    C["ped", "obj"] = (fn/2.0)/100.0
+    C["ped", "empty"] = (fn/2.0)/100.0
+    
+    C["obj", "ped"] = ((1-recall)*100.0/2)/100.0
+    C["obj", "obj"] = (tn/2*4.0/5)/100.0
+    C["obj", "empty"] = (tn/2*1/5)/100.0
+
+    C["empty", "ped"] = ((1-recall)*100/2)/100.0
+    C["empty", "obj"] = (tn/2*1.0/5)/100.0
+    C["empty", "empty"] = (tn/2*4.0/5.0)/100.0
+    tol = 1e-4
+    assert(abs(C["ped", "ped"] + C["obj", "ped"] + C["empty", "ped"] - 1.0) < tol)
+    assert(abs(C["ped", "obj"] + C["obj", "obj"] + C["empty", "obj"]- 1.0)< tol)
+    assert(abs(C["ped", "empty"] + C["obj", "empty"] + C["empty", "empty"]- 1.0) < tol)
+
+    return C
+
+
 # Function that converts to a Markov chain from states and actions:
 def _construct_mdpmc(states, transitions, init, actions=None):
     if actions is not None:

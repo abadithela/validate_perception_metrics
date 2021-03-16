@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Mar  8 11:08:15 2021
+
 @author: apurvabadithela
 """
 
@@ -53,7 +54,7 @@ def not_pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
 
     sys_init = {'xcar='+str(xcar), 'vcar='+str(vcar)}
     env_init = {'xobj='+str(1)}
-
+    
      # Test lines:
     sys_init = {'xcar='+str(xcar)}
     env_init = {'xobj='+str(1)}
@@ -95,7 +96,7 @@ def pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
     sys_vars['xcar'] = (1, Ncar)
     sys_vars['vcar'] = (Vlow, Vhigh)
     env_vars = {}
-    env_vars['xped'] = (0, Nped-xped) # Possible cells pedestrian can occupy
+    env_vars['xped'] = (0,1) # Pedestrian is present or absent
 
     sys_init = {'xcar='+str(xcar), 'vcar='+str(vcar)}
     env_init = {'xped='+str(xped)}
@@ -113,27 +114,96 @@ def pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
     env_safe = set()
 
     # Environment safety specs: Static pedestrian
-    for xi in range(0, Nped-xped+1):
+    for xi in range(0, 2):
         env_safe |= {'xped='+str(xi)+'-> X(xped='+str(xi)+')'}
-
-    for xi in range(0, Nped-xped+1):
-        xcar_jj = xi+xped+(xcross_start-1)-1
-        # Safety specifications to specify that car must stop before pedestrian:
-        sys_safe |= {'((xped = '+str(xi)+') ||!(xcar = '+str(xcar_jj)+' && vcar = 0))'}
-        car_states = ""
-        for xcar_ii in range(xcar_jj, Ncar+1):
-            if car_states == "":
-                car_states = "xcar = "+str(xcar_ii)
-            else:
-                car_states = car_states + " || xcar = " + str(xcar_ii)
-        sys_safe |= {'(!(xped = '+str(xi)+')||!('+car_states+')||(vcar = 0 && xcar = '+str(xcar_jj)+'))'}
+    
+    
+    xcar_jj = xped+(xcross_start-1)-1
+    # Safety specifications to specify that car must stop before pedestrian:
+    sys_safe |= {'((xped = 1) ||!(xcar = '+str(xcar_jj)+' && vcar = 0))'}
+    car_states = ""
+    for xcar_ii in range(xcar_jj, Ncar+1):
+        if car_states == "":
+            car_states = "xcar = "+str(xcar_ii)
+        else:
+            car_states = car_states + " || xcar = " + str(xcar_ii)
+    sys_safe |= {'(!(xped = 1)||!('+car_states+')||(vcar = 0 && xcar = '+str(xcar_jj)+'))'}
         # sys_safe |= {'(xped='+str(xi)+' && xcar = '+str(xcar_jj)+' && vcar = 0) -> X(xcar = '+str(xcar_jj)+' && vcar = 0)'}
-
+    
     # for ii in range(0, Nped-xped+1):
     #     xcar_jj = ii+xped+(xcross_start-1)-1
     #     pii = '(xped='+str(ii)+')'
     #     qii = '(xcar='+str(xcar_jj)+') && (vcar=0)'
     #     spec1_pii = response_to_gr1(pii, qii)
+        
+    #     str_aux1 = "aux_"+str(ii)
+    #     str_aux2 = "aux_"+str(2*ii+1)
+        
+    #     sys_vars[str_aux1] = 'boolean'
+    #     str_safe = spec1_pii.sys_safety
+    #     str_prog = spec1_pii.sys_prog
+
+    #     for si in str_safe:
+    #         sii = si.replace("aux", str_aux1)
+    #         sys_safe |= {sii}
+    #     for si in str_prog:
+    #         sii = si.replace("aux", str_aux1)
+    #         sys_prog |= {sii}
+        
+    
+    # System safety specs/ car doesn't stop before pedestrians start
+    # for ii in range(1, xped):
+    #     spec2_ii = {'(xcar='+str(ii)+')-> (!(vcar=0))'}
+    #     sys_safe |= spec2_ii
+    
+    # system safety specs
+   # for ii in range(Nped, 0, -1):
+   #     xcar_jj = ii+(xcross_start-1)-1
+   #     assert xcar_jj > 0
+   #     spec1_ii = {'(xcar='+str(xcar_jj)+') && (xped='+str(ii)+')-> (vcar=0)'}
+   #     sys_safe |= spec1_ii
+   #     spec2_ii = {'(xcar='+str(xcar_jj)+') && !(xped='+str(ii)+')-> (!(vcar=0))'}
+   #     sys_safe |= spec2_ii
+
+    # System safety specs:
+    # for ii in range(1, xcross_start):
+    #     spec2_ii = {'(xcar='+str(ii)+')-> (!(vcar=0))'}
+    #     sys_safe |= spec2_ii
+    
+    # ======================================================================= #
+    # Adding system safety specifications:
+    # for ii in range(0, Nped-xped+1):
+    #     xcar_jj = ii+xped+(xcross_start-1)-1
+    #     pii = '(xped='+str(ii)+')'
+    #     qii = '(xcar='+str(xcar_jj)+') && (vcar=0)'
+    #     spec1_pii = response_to_gr1(pii, qii)
+    #     qii_2 = '!((xcar='+str(xcar_jj)+') && (vcar=0))'
+    #     pii_2 = '!(xped='+str(ii)+')'
+    #     spec2_pii = response_to_gr1(pii_2, qii_2)
+    #     str_aux1 = "aux_"+str(2*ii)
+    #     str_aux2 = "aux_"+str(2*ii+1)
+        
+    #     sys_vars[str_aux1] = 'boolean'
+    #     str_safe = spec1_pii.sys_safety
+    #     str_prog = spec1_pii.sys_prog
+
+    #     sys_vars[str_aux2] = 'boolean'
+    #     str_safe2 = spec2_pii.sys_safety
+    #     str_prog2 = spec2_pii.sys_prog
+    #     for si in str_safe:
+    #         sii = si.replace("aux", str_aux1)
+    #         sys_safe |= {sii}
+    #     for si in str_prog:
+    #         sii = si.replace("aux", str_aux1)
+    #         sys_prog |= {sii}
+    #     for si in str_safe2:
+    #         sii = si.replace("aux", str_aux2)
+    #         sys_safe |= {sii}
+    #     for si in str_prog2:
+    #         sii = si.replace("aux", str_aux2)
+    #         sys_prog |= {sii}
+    # ========================================================================#
+    # Add system dynamics to safety specs:
     for ii in range(1, Ncar+1):
         for vi in range(Vlow, Vhigh+1):
             if vi==0:
@@ -192,17 +262,6 @@ def emptyK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start):
                 sys_safe|=spec_ii
             elif vi == Vhigh:
                 xf_ii = min(ii+vi, Ncar)
-    spec_k = {'(xempty=1 && vcar='+str(Vhigh)+')->X(vcar='+str(Vhigh)+')'}
-    sys_safe |= spec_k
-
-    # Add system dynamics to safety specs:
-    for ii in range(1, Ncar+1):
-        for vi in range(Vlow, Vhigh+1):
-            if vi==0:
-                spec_ii = {'((xcar='+str(ii)+') && (vcar=0))-> X((vcar=1) && xcar='+str(ii)+')'}
-                sys_safe|=spec_ii
-            elif vi == Vhigh:
-                xf_ii = min(ii+vi, Ncar)
                 spec_ii = {'((xcar='+str(ii)+') && (vcar='+str(vi)+'))-> X((vcar='+str(vi)+'|| vcar='+str(vi-1)+') && xcar='+str(xf_ii)+')'}
                 sys_safe|=spec_ii
             else:
@@ -221,7 +280,7 @@ def construct_controllers(Ncar, Vlow, Vhigh, xped, vcar, xcross_start):
     env_vars, sys_vars, env_init, sys_init, env_safe, sys_safe, env_prog, sys_prog = pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start)
     Kped = design_C(env_vars, sys_vars, env_init, sys_init, env_safe, sys_safe, env_prog, sys_prog)
     write_python_case("ped_controller.py", Kped)
-
+    
     # When something other than a pedestrian is observed:
     env_vars, sys_vars, env_init, sys_init, env_safe, sys_safe, env_prog, sys_prog = not_pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start)
     Knot_ped = design_C(env_vars, sys_vars, env_init, sys_init, env_safe, sys_safe, env_prog, sys_prog)
@@ -236,4 +295,33 @@ def construct_controllers(Ncar, Vlow, Vhigh, xped, vcar, xcross_start):
     K["ped"] = Kped
     K["obj"] = Knot_ped
     K["empty"] = Kempty
+
+    return K
+if __name__=='__main__':
+    # Simple example of pedestrian crossing street:
+    Ncar = 5
+    Nped = 3
+    Vhigh = 1
+    Vlow = 0
+    xcar = 1
+    vcar = Vhigh
+    xped = 3
+    xcross_start = 3
+    assert (Nped + xcross_start-1 <= Ncar)
+    # When a pedestrian is observed:
+    env_vars, sys_vars, env_init, sys_init, env_safe, sys_safe, env_prog, sys_prog = pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start)
+    Kped = design_C(env_vars, sys_vars, env_init, sys_init, env_safe, sys_safe, env_prog, sys_prog)
+    write_python_case("ped_controller.py", Kped)
+
+    # When something other than a pedestrian is observed:
+    env_vars, sys_vars, env_init, sys_init, env_safe, sys_safe, env_prog, sys_prog = not_pedestrianK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start)
+    Knot_ped = design_C(env_vars, sys_vars, env_init, sys_init, env_safe, sys_safe, env_prog, sys_prog)
+    write_python_case("not_ped_controller.py", Knot_ped)
+
+    # When nothing is observed:
+    env_vars, sys_vars, env_init, sys_init, env_safe, sys_safe, env_prog, sys_prog = emptyK(Ncar, Nped, xcar, vcar, Vlow, Vhigh, xped, xcross_start)
+    Kempty = design_C(env_vars, sys_vars, env_init, sys_init, env_safe, sys_safe, env_prog, sys_prog)
+    write_python_case("empty_controller.py", Kempty)
+
+    
 

@@ -7,4 +7,4 @@ module sys_model
 
 endmodule
 
-label "p0" = (s=0);
+label "p1" = (s=0);
