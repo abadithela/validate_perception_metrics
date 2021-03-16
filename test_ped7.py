@@ -76,13 +76,13 @@ if ex == 1:
     VMAX = []
     INIT_V = dict()
     P = dict()
-    MAX_V = 10
+    MAX_V = 5
     for ip in range(Np):
         prec_i = prec[ip]
         rec_i = recall[ip]
         INIT_V[ip] = dict()
         P[ip] = dict()
-        for vmax in range(1, MAX_V):
+        for vmax in range(1, MAX_V+1):
             INIT_V[ip][vmax] = []
             P[ip][vmax] = []
             print("===========================================================")
@@ -116,7 +116,7 @@ if ex == 1:
                 INIT_V[ip][vmax].append(vcar)
                 p = result[start_state]
                 print('Probability of satisfaction for initial speed, {}, and max speed, {} is p = {}:'.format(vcar, vmax, p))
-                P[ip][vmax].append(result[start_state])
+                P[ip][vmax].append(result2[start_state])
 
 # Write to json file:
 timestr = time.strftime("%Y%m%d-%H%M%S")
