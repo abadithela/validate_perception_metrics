@@ -82,7 +82,7 @@ if ex == 1:
     VMAX = []
     INIT_V = dict()
     P = dict()
-    MAX_V = 10
+    MAX_V = 3
     for vmax in range(1, MAX_V+1):
         INIT_V[vmax] = []
         P[vmax] = []
@@ -107,7 +107,7 @@ if ex == 1:
             state_info["bad"] = bad_states
             state_info["good"] = good_state
             for st in list(good_state):
-                formula2 = 'P=?[F(\"'+st+'\")]'
+                formula2 = 'P=?[F((\"'+st+'\"))]'
             M = call_MC(S, O, state_to_S, K, K_backup, C, true_env, true_env_type, state_info)
             result = M.prob_TL(formula)
             result2 = M.prob_TL(formula2)

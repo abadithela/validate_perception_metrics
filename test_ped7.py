@@ -76,13 +76,13 @@ if ex == 1:
     VMAX = []
     INIT_V = dict()
     P = dict()
-    MAX_V = 5
+    MAX_V = 10
     for ip in range(Np):
         prec_i = prec[ip]
         rec_i = recall[ip]
         INIT_V[ip] = dict()
         P[ip] = dict()
-        for vmax in range(1, MAX_V+1):
+        for vmax in range(1, 6):
             INIT_V[ip][vmax] = []
             P[ip][vmax] = []
             print("===========================================================")
