@@ -86,17 +86,17 @@ if ex == 1:
             start_state = "S"+str(state_f(1,vcar))
             print(start_state)
             S, state_to_S, K_backup = cmp.system_states_example_ped(Ncar, Vlow, Vhigh)
-            C = cmp.confusion_matrix_ped()
+            C = cmp.confusion_matrix_ped3()
             K = K_des.construct_controllers(Ncar, Vlow, Vhigh, xped, vcar, xcross_start)
             true_env = str(1) #Sidewalk 3
-            true_env_type = "obj"
+            true_env_type = "ped"
             O = {"ped", "obj", "empty"}
             state_info = dict()
             state_info["start"] = start_state
             state_info["bad"] = bad_states
             state_info["good"] = good_state
             for st in list(good_state):
-                formula2 = 'P=?[G!(\"'+st+'\")]'
+                formula2 = 'P=?[F(\"'+st+'\")]'
             M = call_MC(S, O, state_to_S, K, K_backup, C, true_env, true_env_type, state_info)
             # result = M.prob_TL(formula)
             result2 = M.prob_TL(formula2)
@@ -114,8 +114,8 @@ if ex == 1:
 timestr = time.strftime("%Y%m%d-%H%M%S")
 fname_v = "type_"+str(ex)+"_"+"init_v_" + timestr+"_.json"
 fname_p = "type_"+str(ex)+"_"+"prob_" + timestr+"_.json"
-fname_v = "test_obj_vmax_10_initv.json"
-fname_p = "test_obj_vmax_10_prob.json"
+fname_v = "test3_ped_vmax_10_initv.json"
+fname_p = "test3_ped_vmax_10_prob.json"
 with open(fname_v, 'w') as f:
     json.dump(INIT_V, f)
 with open(fname_p, 'w') as f:
