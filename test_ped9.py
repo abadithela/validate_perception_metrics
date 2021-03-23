@@ -66,10 +66,9 @@ def initialize(vmax, MAX_V):
     formula = "P=?[G("+str(phi1)+") && G("+str(phi2)+")]"
     return Ncar, Vlow, Vhigh, xcross_start, xped, bad_states, good_state, formula
 
-prec = [0.95, 0.9, 0.82, 0.7, 0.4, 0.1]
-recall = [0.2, 0.4, 0.6, 0.8, 0.9, 1.0]
-prec = [0.95, 0.9, 0.82]
-recall = [0.2, 0.4, 0.6]
+prec = [0.95, 0.9, 0.82, 0.7, 0.4]
+recall = [0.2, 0.4, 0.6, 0.8, 0.9]
+
 Np = len(prec)
 ex= 1
 if ex == 1:
@@ -80,9 +79,13 @@ if ex == 1:
     for ip in range(Np):
         prec_i = prec[ip]
         rec_i = recall[ip]
+        print("Precision: ")
+        print(prec_i)
+        print("Recall: ")
+        print(rec_i)
         INIT_V[ip] = dict()
         P[ip] = dict()
-        for vmax in range(4,5):
+        for vmax in range(8,MAX_V+1):
             INIT_V[ip][vmax] = []
             P[ip][vmax] = []
             print("===========================================================")
@@ -105,8 +108,12 @@ if ex == 1:
                 state_info["start"] = start_state
                 state_info["bad"] = bad_states
                 state_info["good"] = good_state
+                # Formula for when true_env = "obj", the requirement is to never come to a stop G!(st)
+                # Formula for when true_env = "empty", the requirement is to never go slower than the initial speed: G(v >= v_0)
                 for st in list(good_state):
                     formula2 = 'P=?[G!(\"'+st+'\")]'
+                # for st in list(good_state):
+                #    formula2 = 'P=?[G!(\"'+st+'\")]'
                 M = call_MC(S, O, state_to_S, K, K_backup, C, true_env, true_env_type, state_info)
                 # result = M.prob_TL(formula)
                 result2 = M.prob_TL(formula2)
@@ -124,10 +131,9 @@ if ex == 1:
 timestr = time.strftime("%Y%m%d-%H%M%S")
 fname_v = "type_"+str(ex)+"_"+"init_v_" + timestr+"_.json"
 fname_p = "type_"+str(ex)+"_"+"prob_" + timestr+"_.json"
-fname_v = "test_noped_vmax_5_initv.json"
-fname_p = "test_noped_vmax_5_prob.json"
+fname_v = "test_noped_vmax_4_5_initv.json"
+fname_p = "test_noped_vmax_4_5_prob.json"
 with open(fname_v, 'w') as f:
     json.dump(INIT_V, f)
 with open(fname_p, 'w') as f:
     json.dump(P, f)
-

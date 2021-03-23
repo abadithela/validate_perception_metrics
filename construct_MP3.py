@@ -59,9 +59,25 @@ def confusion_matrix_ped():
     C["obj", "empty"] = 2/15
     
     C["empty", "ped"] = 3/15
-    C["empty", "obj"] = 3/15
+    C["empty", "obj"] = 2/15
     C["empty", "empty"] = 10/15
     
+    return C
+# Confusion matrix for second confusion matrix
+def confusion_matrix_ped3():
+    C = dict()
+    C["ped", "ped"] = 0.9
+    C["ped", "obj"] = 0.075
+    C["ped", "empty"] = 0.025
+
+    C["obj", "ped"] = 0.08
+    C["obj", "obj"] = 0.80
+    C["obj", "empty"] = 0.12
+
+    C["empty", "ped"] = 0.02
+    C["empty", "obj"] = 0.04
+    C["empty", "empty"] = 0.94
+
     return C
 
 # Script for confusion matrix of pedestrian
@@ -157,7 +173,10 @@ class synth_markov_chain:
        states = set(self.states) # Set of product states of the car
        transitions = set()
        for k in self.M.keys():
-           t = (k[0], k[1], self.M[k])
+           p_approx = min(1, abs(self.M[k]))
+           if abs(1-self.M[k]) > 1e-2:
+               print(abs(1-self.M[k]))
+           t = (k[0], k[1], p_approx)
            transitions |= {t}
        assert init in self.states
        # for state in mc.states:
@@ -197,7 +216,7 @@ class synth_markov_chain:
            prob = [(t[2])['probability'] for t in end_states]
            # print("probability of end states: ")
            # print(prob)
-           assert abs(sum(prob)-1)<1e-4 # Checking that probabilities add up to 1 for every state
+       #    assert abs(sum(prob)-1)<1e-4 # Checking that probabilities add up to 1 for every state
 
    # Sets the state of the true environment
     def set_true_env_state(self, st, true_env_type):
@@ -361,4 +380,22 @@ class synth_markov_chain:
         # Returns a tulip transys:
         # MC_ts = stormpy_int.to_tulip_transys(path_MC)
         result = stormpy_int.model_checking(self.MC, phi, prism_file_path) # Since there is no moving obstacle, try checking only the pedestrian obstacle
-        return result 
+        #for state in self.MC.states:
+        #    print("  State {}, with labels {}, Pr = {}".format(state, self.MC.states[state]["ap"], result[str(state)]))
+        return result
+
+    # Function to append labels to a .nm file:
+    def add_labels(self, MAX_V):
+        model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
+        path_MC = os.path.join(model_path, "model_MC.nm")
+        for vi in range(0, MAX_V):
+            var = "label \"v_"+str(vi)+"\"="
+            flg_var = 0 # Set after the first state is appended
+            for k, val in self.state_dict.items():
+                if k[1] == vi:
+                    if flg_var == 0:
+                        flg_var = 1
+                        var = var + "(s = "
+                    var = var + ""
+            with open(path_MC, 'a') as out:
+                out.write(var + '\n')            

@@ -68,8 +68,8 @@ def initialize(vmax, MAX_V):
     return Ncar, Vlow, Vhigh, xcross_start, xped, bad_states, good_state, formula
 
 
-prec = [0.95, 0.9, 0.82, 0.7, 0.4, 0.1]
-recall = [0.2, 0.4, 0.6, 0.8, 0.9, 1.0]
+prec = [0.95, 0.9, 0.82, 0.7, 0.4]
+recall = [0.2, 0.4, 0.6, 0.8, 0.9]
 Np = len(prec)
 ex= 1
 if ex == 1:
@@ -82,7 +82,7 @@ if ex == 1:
         rec_i = recall[ip]
         INIT_V[ip] = dict()
         P[ip] = dict()
-        for vmax in range(1, 6):
+        for vmax in range(4, 6):
             INIT_V[ip][vmax] = []
             P[ip][vmax] = []
             print("===========================================================")
@@ -122,10 +122,9 @@ if ex == 1:
 timestr = time.strftime("%Y%m%d-%H%M%S")
 fname_v = "type_"+str(ex)+"_"+"init_v_" + timestr+"_.json"
 fname_p = "type_"+str(ex)+"_"+"prob_" + timestr+"_.json"
-fname_v = "test_prec_rec_MC_vmax_10_initv.json"
-fname_p = "test_prec_rec_MC_vmax_10_prob.json"
+fname_v = "test_prec_rec_MC_vmax_4_5_initv.json"
+fname_p = "test_prec_rec_MC_vmax_4_5_prob.json"
 with open(fname_v, 'w') as f:
     json.dump(INIT_V, f)
 with open(fname_p, 'w') as f:
     json.dump(P, f)
-

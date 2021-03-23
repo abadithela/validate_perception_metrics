@@ -1,12 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Mar 15 09:57:34 2021
-
-@author: apurvabadithela
-"""
-# Single pedestrian location
-
 import numpy as np
 import construct_MP3 as cmp
 import design_controller4 as K_des
@@ -19,7 +10,7 @@ import sys
 sys.setrecursionlimit(10000)
 
 def initialize(vmax, MAX_V):
-    Ncar = int(MAX_V*(MAX_V+1)/2 + 3)
+    Ncar = int(MAX_V*(MAX_V+1)/2 + 10)
     Vlow=  0
     Vhigh = vmax
     x_vmax_stop = MAX_V*(MAX_V+1)/2 + 1
@@ -64,7 +55,7 @@ def initialize(vmax, MAX_V):
     good_state |= gst
     bad_states |= bst
     formula = "P=?[!("+str(bad)+") U "+str(good)+"]"
-    
+
     phi1 = "!("+good+")"
     phi2 = "("+good+") | !("+bad
     for xcar_ii in range(xcar_stop+1, Ncar+1):
@@ -72,7 +63,7 @@ def initialize(vmax, MAX_V):
         bad_states |= bst
         phi2 = phi2 + "|" + bad
     phi2 = phi2 + ")"
-    formula = "P=?[G("+str(phi2)+")]"
+    formula = "P=?[G("+str(phi1)+") && G("+str(phi2)+")]"
     return Ncar, Vlow, Vhigh, xcross_start, xped, bad_states, good_state, formula
 
 ex= 1
@@ -80,8 +71,8 @@ if ex == 1:
     VMAX = []
     INIT_V = dict()
     P = dict()
-    MAX_V = 3
-    for vmax in range(1, MAX_V):
+    MAX_V = 10
+    for vmax in range(1,MAX_V+1):
         INIT_V[vmax] = []
         P[vmax] = []
         print("===========================================================")
@@ -95,35 +86,36 @@ if ex == 1:
             start_state = "S"+str(state_f(1,vcar))
             print(start_state)
             S, state_to_S, K_backup = cmp.system_states_example_ped(Ncar, Vlow, Vhigh)
-            print(len(S))
             C = cmp.confusion_matrix_ped()
             K = K_des.construct_controllers(Ncar, Vlow, Vhigh, xped, vcar, xcross_start)
             true_env = str(1) #Sidewalk 3
-            true_env_type = "ped"
+            true_env_type = "obj"
             O = {"ped", "obj", "empty"}
             state_info = dict()
             state_info["start"] = start_state
             state_info["bad"] = bad_states
             state_info["good"] = good_state
-            #for st in list(good_state):
-            #    formula2 = 'P=?[F(\"'+st+'\")]'
+            for st in list(good_state):
+                formula2 = 'P=?[G!(\"'+st+'\")]'
             M = call_MC(S, O, state_to_S, K, K_backup, C, true_env, true_env_type, state_info)
-            result = M.prob_TL(formula)
-            #result2 = M.prob_TL(formula2)
-            #print('Probability of eventually reaching good state for initial speed, {}, and max speed, {} is p = {}:'.format(vcar, vmax, result2[start_state]))
+            # result = M.prob_TL(formula)
+            result2 = M.prob_TL(formula2)
+            print('Probability of eventually reaching good state for initial speed, {}, and max speed, {} is p = {}:'.format(vcar, vmax, result2[start_state]))
             # Store results:
             VMAX.append(vmax)
             INIT_V[vmax].append(vcar)
-            p = result[start_state]
-            print('Probability of satisfaction for initial speed, {}, and max speed, {} is p = {}:'.format(vcar, vmax, p))
-            P[vmax].append(result[start_state])
+            # p = result[start_state]
+            # print('Probability of satisfaction for initial speed, {}, and max speed, {} is p = {}:'.format(vcar, vmax, p))
+            P[vmax].append(result2[start_state])
+
+
 
 # Write to json file:
 timestr = time.strftime("%Y%m%d-%H%M%S")
 fname_v = "type_"+str(ex)+"_"+"init_v_" + timestr+"_.json"
 fname_p = "type_"+str(ex)+"_"+"prob_" + timestr+"_.json"
-fname_v = "test_same_MC_type1_vmax_10_initv.json"
-fname_p = "test_same_MC_type1_vmax_10_prob.json"
+fname_v = "test_obj_vmax_10_initv.json"
+fname_p = "test_obj_vmax_10_prob.json"
 with open(fname_v, 'w') as f:
     json.dump(INIT_V, f)
 with open(fname_p, 'w') as f:
