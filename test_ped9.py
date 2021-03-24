@@ -85,7 +85,7 @@ if ex == 1:
         print(rec_i)
         INIT_V[ip] = dict()
         P[ip] = dict()
-        for vmax in range(8,MAX_V+1):
+        for vmax in range(4,6):
             INIT_V[ip][vmax] = []
             P[ip][vmax] = []
             print("===========================================================")
@@ -102,7 +102,7 @@ if ex == 1:
                 C = cmp.confusion_matrix_ped2(prec_i, rec_i)
                 K = K_des.construct_controllers(Ncar, Vlow, Vhigh, xped, vcar, xcross_start)
                 true_env = str(1) #Sidewalk 3
-                true_env_type = "obj"
+                true_env_type = "empty"
                 O = {"ped", "obj", "empty"}
                 state_info = dict()
                 state_info["start"] = start_state
@@ -131,8 +131,8 @@ if ex == 1:
 timestr = time.strftime("%Y%m%d-%H%M%S")
 fname_v = "type_"+str(ex)+"_"+"init_v_" + timestr+"_.json"
 fname_p = "type_"+str(ex)+"_"+"prob_" + timestr+"_.json"
-fname_v = "test_noped_vmax_4_5_initv.json"
-fname_p = "test_noped_vmax_4_5_prob.json"
+fname_v = "test_prec_rec_empty_vmax_4_5_initv.json"
+fname_p = "test_prec_rec_empty_vmax_4_5_prob.json"
 with open(fname_v, 'w') as f:
     json.dump(INIT_V, f)
 with open(fname_p, 'w') as f:
