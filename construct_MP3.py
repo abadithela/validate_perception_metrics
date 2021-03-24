@@ -67,15 +67,15 @@ def confusion_matrix_ped():
 def confusion_matrix_ped3():
     C = dict()
     C["ped", "ped"] = 0.9
-    C["ped", "obj"] = 0.075
-    C["ped", "empty"] = 0.025
+    C["ped", "obj"] = 0.08
+    C["ped", "empty"] = 0.02
 
-    C["obj", "ped"] = 0.08
+    C["obj", "ped"] = 0.075
     C["obj", "obj"] = 0.80
-    C["obj", "empty"] = 0.12
+    C["obj", "empty"] = 0.04
 
-    C["empty", "ped"] = 0.02
-    C["empty", "obj"] = 0.04
+    C["empty", "ped"] = 0.025
+    C["empty", "obj"] = 0.12
     C["empty", "empty"] = 0.94
 
     return C
